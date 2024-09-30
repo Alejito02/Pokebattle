@@ -134,7 +134,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 10px;
+  margin: 0px;
   font-family: 'Arial', sans-serif;
   background-image: url("https://w.wallhaven.cc/full/4l/wallhaven-4lmey2.png");
   background-repeat: no-repeat;
