@@ -136,14 +136,10 @@ export default {
   align-items: center;
   margin: 10px;
   font-family: 'Arial', sans-serif;
-  background-image: url("https://i.pinimg.com/564x/97/15/78/971578e10b1d7cadd3889670529384db.jpg");
-  background-size: cover;
+  background-image: url("https://w.wallhaven.cc/full/4l/wallhaven-4lmey2.png");
+  background-repeat: no-repeat;
+  background-size: 100%;
   background-position: center;
-  background-attachment: fixed;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  text-align: center;
 }
 
 .card-container {
