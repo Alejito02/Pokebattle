@@ -138,7 +138,7 @@ export default {
   font-family: 'Arial', sans-serif;
   background-image: url("https://i.pinimg.com/564x/0d/0f/0c/0d0f0c384be14928fd4dcb6ca7f0e6b5.jpg");
   background-repeat: no-repeat;
-  background-size: 100%;
+  background-size: 200%;
   background-position: center;
 }
 
