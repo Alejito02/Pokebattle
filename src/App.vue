@@ -136,7 +136,7 @@ export default {
   align-items: center;
   margin: 10px;
   font-family: 'Arial', sans-serif;
-  background-image: url("https://w.wallhaven.cc/full/4l/wallhaven-4l6o.jpg");
+  background-image: url("https://i.pinimg.com/564x/97/15/78/971578e10b1d7cadd3889670529384db.jpg");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
