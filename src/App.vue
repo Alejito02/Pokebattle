@@ -165,6 +165,7 @@ export default {
   background-color: #fff;
   width: 300px;
   cursor: pointer;
+  height: 100%;
 }
 
 .pokemon-logo {
