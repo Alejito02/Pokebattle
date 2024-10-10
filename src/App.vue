@@ -1,46 +1,59 @@
 <template>
   <div class="app-container">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/International_Pok%C3%A9mon_logo.svg/640px-International_Pok%C3%A9mon_logo.svg.png" alt="Pokémon Logo" class="pokemon-logo" />
+    <div v-if="!gameStarted" class="welcome-screen">
+      <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/e8ddc4da-23dd-4502-b65b-378c9cfe5efa/dfgdnvd-2ca9ea08-d95a-4a0e-bddf-d956e091a924.png/v1/fill/w_1280,h_1280/pokemon_battle_revolution_logo_by_jormxdos_dfgdnvd-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTI4MCIsInBhdGgiOiJcL2ZcL2U4ZGRjNGRhLTIzZGQtNDUwMi1iNjViLTM3OGM5Y2ZlNWVmYVwvZGZnZG52ZC0yY2E5ZWEwOC1kOTVhLTRhMGUtYmRkZi1kOTU2ZTA5MWE5MjQucG5nIiwid2lkdGgiOiI8PTEyODAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.oLSOZ2nlDXjLOfuFiEtT8cSYr3k7WrWfhAL_SYgWrYY" class="logo-pokemon">
+      <label for="rounds" class="round-txt">¿Cuántas rondas quieres jugar?</label>
+      <input v-model="rounds" type="number" min="1" id="rounds" />
+      <button @click="startGame">Comenzar Juego</button>
+    </div>
 
-    <div class="card-container">
-      <div class="card" v-for="(pokemon, index) in pokemons" :key="index" @click="selectPokemon(pokemon)">
-        <div class="pokemon-image-container" :style="{ backgroundColor: typeColors[pokemon.types[0].type.name] }">
-          <img :src="pokemon.sprites?.front_default" alt="Pokemon Image" class="pokemon-image" />
+    <div v-if="gameStarted" class="game-container">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/International_Pok%C3%A9mon_logo.svg/640px-International_Pok%C3%A9mon_logo.svg.png" alt="Pokémon Logo" class="pokemon-logo" />
+      
+      <div v-if="!currentStat && currentRound < rounds" class="stat-selection">
+        <h3>Selecciona una estadística para combatir:</h3>
+        <button v-for="stat in ['hp', 'attack', 'defense']" :key="stat" @click="selectStat(stat)">
+          {{ capitalize(stat) }}
+        </button>
+      </div>
+
+      <div v-else>
+        <div class="card-row">
+          <div class="card" v-for="(pokemon, index) in currentPokemons" :key="index">
+            <div class="pokemon-image-container" :style="{ backgroundColor: typeColors[pokemon.types[0].type.name] }">
+              <img :src="pokemon.sprites?.front_default" alt="Pokemon Image" class="pokemon-image" />
+            </div>
+            <h3>{{ pokemon.name ? pokemon.name : 'Nombre no disponible' }}</h3>
+            <div class="stats">
+              <h5>Estadísticas</h5>
+              <ul>
+                <li v-for="stat in pokemon.stats.filter(stat => ['hp', 'attack', 'defense'].includes(stat.stat.name))" :key="stat.stat.name">
+                  <div class="stat-name">{{ capitalize(stat.stat.name) }}: {{ stat.base_stat }}</div>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
         
-        <h4>{{ pokemon.name ? pokemon.name || capitalize : 'Nombre no disponible' }}</h4>
-        
-        <div class="types">
-          <button 
-            v-for="type in pokemon.types" 
-            :key="type.slot" 
-            :style="{ backgroundColor: typeColors[type.type.name] }"
-            class="type-button"
-          >
-            {{ type.type.name }}
-          </button>
+        <div v-if="currentRound < rounds" class="battle-button-container">
+          <button @click="battle">Batalla!</button>
         </div>
 
-        <div class="stats">
-          <h6>Estadísticas</h6>
-          <ul>
-            <li v-for="stat in pokemon.stats.filter(stat => ['hp', 'attack', 'defense'].includes(stat.stat.name))" :key="stat.stat.name">
-              <div class="stat-name">{{ stat.stat.name || capitalize }}: {{ stat.base_stat }}</div>
-              <div class="stat-bar">
-                <div 
-                  class="stat-bar-fill" 
-                  :style="{ width: (stat.base_stat / 225 * 100) + '%' }"
-                ></div>
-              </div>
-            </li>
-          </ul>
+        <div v-if="winner" class="winner-card">
+          <h3>Ganador de la ronda: {{ winner.name }}</h3>
         </div>
       </div>
-      <div class="battle-button-container">
-        <button @click="battle">Batalla!</button>
+
+      <div class="scoreboard">
+        <h4>Rondas Jugadas: {{ currentRound }}/{{ rounds }}</h4>
+        <h4>Puntuaciones:</h4>
+        <p>Jugador 1: {{ player1Score }}</p>
+        <p>Jugador 2: {{ player2Score }}</p>
       </div>
-      <div v-if="winner" class="winner-card">
-        <h4>El ganador es {{ winner.name }}!</h4>
+
+      <div v-if="currentRound >= rounds" class="final-winner">
+        <h2>El ganador final es: {{ finalWinner }}</h2>
+        <button @click="resetGame">Volver a Jugar</button>
       </div>
     </div>
   </div>
@@ -51,9 +64,15 @@ import { ref } from 'vue';
 
 export default {
   setup() {
-    const pokemons = ref([]);
+    const gameStarted = ref(false);
+    const rounds = ref(1);
+    const currentRound = ref(0);
+    const player1Score = ref(0);
+    const player2Score = ref(0);
+    const currentPokemons = ref([]);
     const winner = ref(null);
-    const selectedPokemon = ref(null);
+    const finalWinner = ref(null);
+    const currentStat = ref(null);
 
     const typeColors = ref({
       normal: '#A8A878',
@@ -61,19 +80,7 @@ export default {
       water: '#6890F0',
       electric: '#F8D030',
       grass: '#78C850',
-      ice: '#98D8D8',
-      fighting: '#C03028',
-      poison: '#A040A0',
-      ground: '#E0C068',
-      flying: '#A890F0',
-      psychic: '#F85888',
-      bug: '#A8B820',
-      rock: '#B8A038',
-      ghost: '#705898',
-      dragon: '#7038F8',
-      dark: '#705848',
-      steel: '#B8B8D0',
-      fairy: '#EE99AC',
+      // ... (otros colores)
     });
 
     const capitalize = (word) => {
@@ -88,66 +95,160 @@ export default {
       try {
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
         const data = await response.json();
-        pokemons.value.push(data);
+        return data;
       } catch (error) {
         console.error(error);
       }
     };
 
-    const battle = async () => {
-      const pokemon1 = pokemons.value[0];
-      const pokemon2 = pokemons.value[1];
+    const startGame = () => {
+      gameStarted.value = true;
+      currentRound.value = 0;
+      player1Score.value = 0;
+      player2Score.value = 0;
+      finalWinner.value = null;
+      nextRound();
+    };
 
-      const pokemon1Stats = pokemon1.stats.reduce((acc, stat) => acc + stat.base_stat, 0);
-      const pokemon2Stats = pokemon2.stats.reduce((acc, stat) => acc + stat.base_stat, 0);
+    const nextRound = async () => {
+      if (currentRound.value >= rounds.value) return;
+      currentRound.value += 1;
+      currentStat.value = null;
+      const pokemon1 = await fetchPokemonData(getRandomPokemonId());
+      const pokemon2 = await fetchPokemonData(getRandomPokemonId());
+      currentPokemons.value = [pokemon1, pokemon2];
+    };
 
-      if (pokemon1Stats > pokemon2Stats) {
+    const selectStat = (stat) => {
+      currentStat.value = stat;
+    };
+
+    const battle = () => {
+      const [pokemon1, pokemon2] = currentPokemons.value;
+      const stat1 = pokemon1.stats.find(stat => stat.stat.name === currentStat.value).base_stat;
+      const stat2 = pokemon2.stats.find(stat => stat.stat.name === currentStat.value).base_stat;
+
+      if (stat1 > stat2) {
         winner.value = pokemon1;
-      } else if (pokemon2Stats > pokemon1Stats) {
+        player1Score.value += 1;
+      } else if (stat2 > stat1) {
         winner.value = pokemon2;
+        player2Score.value += 1;
       } else {
-        winner.value = null;
+        player1Score.value += 1;
+        player2Score.value += 1;
+      }
+
+      if (currentRound.value < rounds.value) {
+        setTimeout(() => {
+          nextRound();
+        }, 2000);
+      } else {
+        determineFinalWinner();
       }
     };
 
-    const selectPokemon = (pokemon) => {
-      selectedPokemon.value = pokemon;
+    const determineFinalWinner = () => {
+      if (player1Score.value > player2Score.value) {
+        finalWinner.value = "Jugador 1";
+      } else if (player2Score.value > player1Score.value) {
+        finalWinner.value = "Jugador 2";
+      } else {
+        finalWinner.value = "Empate";
+      }
     };
 
-    fetchPokemonData(getRandomPokemonId());
-    fetchPokemonData(getRandomPokemonId());
+    const resetGame = () => {
+      gameStarted.value = false;
+      rounds.value = 1;
+      currentRound.value = 0;
+      player1Score.value = 0;
+      player2Score.value = 0;
+      winner.value = null;
+      finalWinner.value = null;
+    };
 
     return {
-      pokemons,
+      gameStarted,
+      rounds,
+      currentRound,
+      player1Score,
+      player2Score,
+      currentPokemons,
       winner,
+      finalWinner,
+      currentStat,
       typeColors,
       capitalize,
+      startGame,
+      selectStat,
       battle,
-      selectPokemon,
+      resetGame,
     };
   },
 };
 </script>
 
 <style>
+body {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(rgba(231, 225, 225, 0.301), rgba(5, 7, 12, 0.226)), url(https://images.squarespace-cdn.com/content/v1/55ef0e29e4b099e22cdc9eea/1456900755158-471EAAKS7VVIHZZPHU9Y/image-asset.jpeg?format=1500w);
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+
+.logo-pokemon{
+
+  max-height: 500px;
+  max-width: 500px;
+}
+
+
+.rounds{
+  size: 10%;
+}
+
+.round-txt{
+ size: 5%;
+}
 .app-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0px;
-  font-family: 'Arial', sans-serif;
-  background-image: url("https://i.pinimg.com/564x/0d/0f/0c/0d0f0c384be14928fd4dcb6ca7f0e6b5.jpg");
-  background-repeat: no-repeat;
-  background-size: 200%;
+  justify-content: center;
+  text-align: center;
+  color: black;
+  height: 100%;
+  width: 100%;
+  background-image: url("https://w.wallhaven.cc/full/4l/wallhaven-4l6o.jpg");
+  background-size: cover;
   background-position: center;
+  background-attachment: fixed;
 }
 
-.card-container {
+#app{
+  padding: 0%;
+}
+
+.game-container{
+background: rgb(255,7,7);
+background: linear-gradient(13deg, rgba(255,7,7,0.8491771708683473) 0%, rgba(0,5,255,0.7931547619047619) 100%);
+}
+
+.pokemon-logo {
+  width: 200px;
+  margin: 20px;
+}
+
+.card-row {
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
-  position: relative;
 }
 
 .card {
@@ -160,13 +261,6 @@ export default {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background-color: #fff;
   width: 300px;
-  cursor: pointer;
-  height: 100%;
-}
-
-.pokemon-logo {
-  width: 200px;
-  margin: 20px;
 }
 
 .pokemon-image-container {
@@ -184,54 +278,21 @@ export default {
   height: 80px;
 }
 
-.types {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 20px;
-}
-
-.type-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.stats {
-  margin: 20px;
-}
-
-.stat-name {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.stat-bar {
-  width: 100%;
-  height: 10px;
-  background-color: #ccc;
-  border-radius: 5px;
-  margin: 10px 0;
-}
-
-.stat-bar-fill {
-  height: 100%;
-  background-color: #4CAF50;
-  border-radius: 5px;
-}
-
 .battle-button-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
+  margin-top: 20px;
 }
 
-.battle-button-container button {
+.winner-card {
+  margin-top: 20px;
+}
+
+.scoreboard, .final-winner {
+  margin-top: 20px;
+}
+
+.stat-selection button {
   padding: 10px 20px;
+  margin: 10px;
   background-color: #ffcc00;
   border: none;
   cursor: pointer;
@@ -239,23 +300,14 @@ export default {
   font-size: 16px;
 }
 
-.winner-card {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
-  background-color: #fff;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.stats,h6{
-  color: black;
-}
-.card,h4{
-  color: black;
+.final-winner button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #ff5733;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  color: white;
 }
 </style>
