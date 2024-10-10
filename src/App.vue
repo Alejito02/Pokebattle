@@ -80,7 +80,6 @@ export default {
       water: '#6890F0',
       electric: '#F8D030',
       grass: '#78C850',
-      // ... (otros colores)
     });
 
     const capitalize = (word) => {
