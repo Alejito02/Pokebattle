@@ -198,13 +198,11 @@ body {
   background-image: linear-gradient(rgba(231, 225, 225, 0.301), rgba(5, 7, 12, 0.226)), url(https://images.squarespace-cdn.com/content/v1/55ef0e29e4b099e22cdc9eea/1456900755158-471EAAKS7VVIHZZPHU9Y/image-asset.jpeg?format=1500w);
   background-color: transparent;
   background-repeat: no-repeat;
-  background-size: 100%;
+  align-content: center;
 }
 
 .logo-pokemon{
-
-  max-height: 500px;
-  max-width: 500px;
+  max-width: 400px;
 }
 
 
@@ -222,12 +220,9 @@ body {
   justify-content: center;
   text-align: center;
   color: black;
-  height: 100%;
-  width: 100%;
-  background-image: url("https://w.wallhaven.cc/full/4l/wallhaven-4l6o.jpg");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background-image: url("");
+  background-size: 100%;
+  background-repeat: no-repeat;
 }
 
 #app{
@@ -309,5 +304,69 @@ background: linear-gradient(13deg, rgba(255,7,7,0.8491771708683473) 0%, rgba(0,5
   border-radius: 5px;
   font-size: 16px;
   color: white;
+}
+
+.welcome-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh; 
+  width: 100%;
+}
+
+@media screen and (max-width:600px){
+
+.logo-pokemon{
+  max-width: 200px;
+}
+.card-row{
+  display: flex;
+  flex-direction: row;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px; 
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  width: 200px; 
+}
+
+.pokemon-image-container {
+  width: 80px; 
+  height: 80px;
+  border-radius: 50%;
+  margin: 10px; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pokemon-image {
+  width: 60px; 
+  height: 60px;
+}
+
+.card h3 {
+  font-size: 16px; 
+  margin: 10px 0;
+}
+
+.stats h5 {
+  font-size: 14px; 
+}
+
+.stats ul li .stat-name {
+  font-size: 12px; 
+}
+
+.battle-button-container button {
+  padding: 8px 16px; 
+  font-size: 14px;   
+}
+
 }
 </style>
