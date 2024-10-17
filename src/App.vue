@@ -20,6 +20,10 @@
     <div v-else class="battle-page">
       <h2>{{ playerName }} vs Bot</h2>
       <p>Ronda actual: {{ currentRound }} / {{ totalRounds }}</p>
+      <div class="scoreboard">
+        <p>{{ playerName }}: {{ playerWins }} victorias</p>
+        <p>Bot: {{ botWins }} victorias</p>
+      </div>
       <div class="teams">
         <div class="team">
           <h3>{{ playerName }}</h3>
@@ -90,6 +94,8 @@ export default {
       lastRoundWinner: null,
       showModal: false,
       winnerName: '',
+      playerWins: 0,
+      botWins: 0,
     };
   },
   methods: {
@@ -152,10 +158,12 @@ export default {
       if (playerStat > botStat) {
         this.roundResult = `${this.playerName} gana la ronda!`;
         this.lastRoundWinner = 'player';
+        this.playerWins++;
         await this.regenerateTeam('bot'); 
       } else if (playerStat < botStat) {
         this.roundResult = 'Bot gana la ronda!';
         this.lastRoundWinner = 'bot';
+        this.botWins++;
         await this.regenerateTeam('player'); 
       } else {
         this.roundResult = 'Empate!';
@@ -173,13 +181,10 @@ export default {
     isWinner(team) {
       return this.lastRoundWinner === team;
     },
-    async calculateWinner() {
-      const playerWins = this.roundResult.includes(this.playerName);
-      const botWins = this.roundResult.includes('Bot');
-
-      if (playerWins && !botWins) {
+    calculateWinner() {
+      if (this.playerWins > this.botWins) {
         this.winnerName = this.playerName;
-      } else if (botWins && !playerWins) {
+      } else if (this.botWins > this.playerWins) {
         this.winnerName = 'Bot';
       } else {
         this.winnerName = 'Empate';
@@ -200,10 +205,15 @@ export default {
       this.selectedStat = '';
       this.roundResult = '';
       this.lastRoundWinner = null;
+      this.playerWins = 0;
+      this.botWins = 0;
+      this.isBattleStarted = false;
     },
   },
 };
 </script>
+
+
 
 <style scoped>
 .app {
@@ -322,12 +332,17 @@ select, button {
 }
 
 .modal-content {
-  background: #fff;
-  padding: 20px;
+  background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrRMSXVmMPziC-OM1Xkh8lIOKCjjksT0M_3Q&s);
+  padding: 10%;
   border-radius: 10px;
   text-align: center;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   animation: slideIn 0.5s;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 @keyframes pulse {
