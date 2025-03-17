@@ -157,8 +157,12 @@ export default {
 </script>
 
 <style scoped>
+.winner-modal {
+  background: rgba(0, 0, 0, 0.705);
+  border-radius: 10px;
+}
 .winner-card {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.925);
   padding: 20px;
   border-radius: 10px;
   text-align: center;
@@ -293,6 +297,13 @@ export default {
   text-align: center;
   margin-top: 10px;
   width: 150px;
+}
+
+@media (max-width: 470px) {
+  .app{
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 </style>
