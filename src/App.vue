@@ -266,7 +266,7 @@ export default {
 }
 
 .info-box {
-  background-image: url("https://e1.pxfuel.com/desktop-wallpaper/654/268/desktop-wallpaper-i-edited-an-of-the-pokedex-to-work-nicely-as-an-iphone-6s-lock-screen-thesilphroad-pokedex-thumbnail.jpg");
+  background-image: url("https://sdmntpreastus.oaiusercontent.com/files/00000000-9be4-61f9-9edf-ef3109a1f279/raw?se=2025-05-29T04%3A51%3A50Z&sp=r&sv=2024-08-04&sr=b&scid=d53f7846-8d96-5cc2-bf00-93d098197d79&skoid=31bc9c1a-c7e0-460a-8671-bf4a3c419305&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-29T01%3A41%3A34Z&ske=2025-05-30T01%3A41%3A34Z&sks=b&skv=2024-08-04&sig=6muVrWWqjLivGXUUUNbMkl7a9f35bjubT5RcXcTIK9o%3D");
   background-size: cover;
   color: rgb(255, 255, 255);
   padding: 10px;
