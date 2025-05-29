@@ -266,7 +266,7 @@ export default {
 }
 
 .info-box {
-  background-image: Adobe Express - file.png;
+background-image: url('img/Adobe Express-file.png');
   background-size: cover;
   color: rgb(255, 255, 255);
   padding: 10px;
